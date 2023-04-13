@@ -1,10 +1,10 @@
-#include "TestNode.h"
+#include "lua_node.h"
 
-TestNode::TestNode() {
+LuaNode::LuaNode() {
 	init();
 }
 
-TestNode::~TestNode() {
+LuaNode::~LuaNode() {
 	//lua_close(state);
 }
 
@@ -24,7 +24,7 @@ int print(lua_State* state) {
 }
 
 
-void TestNode::init() {
+void LuaNode::init() {
 	if (!stateClosed) {
 		close_state();
 	}
@@ -33,7 +33,7 @@ void TestNode::init() {
 	luaL_openlibs(state);
 }
 
-void TestNode::open_state() {
+void LuaNode::open_state() {
 	state = luaL_newstate();
 	instances.insert({ state, this });
 	stateClosed = false;
@@ -41,34 +41,34 @@ void TestNode::open_state() {
 	lua_register(state, "print_debug", print);
 }
 
-void TestNode::close_state() {
+void LuaNode::close_state() {
 	//instances.erase(state);
 	state = luaL_newstate();
 	stateClosed = true;
 }
 
-void TestNode::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("init"), &TestNode::init);
-	ClassDB::bind_method(D_METHOD("_process", "delta"), &TestNode::_process);
-	ClassDB::bind_method(D_METHOD("load_lua", "code"), &TestNode::load_lua);
-	ClassDB::bind_method(D_METHOD("call_update"), &TestNode::call_update);
-	//ClassDB::bind_method(D_METHOD("register_function", "functionName", "function"), &TestNode::register_function);
-	ClassDB::bind_method(D_METHOD("register_function", "functionName", "callback"), &TestNode::register_function);
-	ClassDB::bind_method(D_METHOD("compile", "code"), &TestNode::compile);
-	ClassDB::bind_method(D_METHOD("print_error"), &TestNode::print_error);
+void LuaNode::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("init"), &LuaNode::init);
+	ClassDB::bind_method(D_METHOD("_process", "delta"), &LuaNode::_process);
+	ClassDB::bind_method(D_METHOD("load_lua", "code"), &LuaNode::load_lua);
+	ClassDB::bind_method(D_METHOD("call_update"), &LuaNode::call_update);
+	//ClassDB::bind_method(D_METHOD("register_function", "functionName", "function"), &LuaNode::register_function);
+	ClassDB::bind_method(D_METHOD("register_function", "functionName", "callback"), &LuaNode::register_function);
+	ClassDB::bind_method(D_METHOD("compile", "code"), &LuaNode::compile);
+	ClassDB::bind_method(D_METHOD("print_error"), &LuaNode::print_error);
 
-	ClassDB::bind_method(D_METHOD("get_compiled_code"), &TestNode::get_compiled_code);
-	ClassDB::bind_method(D_METHOD("get_origignal_code"), &TestNode::get_origignal_code);
+	ClassDB::bind_method(D_METHOD("get_compiled_code"), &LuaNode::get_compiled_code);
+	ClassDB::bind_method(D_METHOD("get_original_code"), &LuaNode::get_original_code);
 
-	ClassDB::bind_method(D_METHOD("add_global", "name", "data"), &TestNode::add_global);
-	ClassDB::bind_method(D_METHOD("call_function", "functionName", "args"), &TestNode::call_function);
+	ClassDB::bind_method(D_METHOD("add_global", "name", "data"), &LuaNode::add_global);
+	ClassDB::bind_method(D_METHOD("call_function", "functionName", "args"), &LuaNode::call_function);
 }
 
-String TestNode::get_compiled_code() {
+String LuaNode::get_compiled_code() {
 	return compiledCode;
 }
 
-String TestNode::get_origignal_code() {
+String LuaNode::get_original_code() {
 	return originalCode;
 }
 
@@ -115,7 +115,7 @@ bool create_table(String name, lua_State* state, Variant input) {
 	return false;
 }
 
-void TestNode::add_global(String name, Variant input) {
+void LuaNode::add_global(String name, Variant input) {
 	create_table(name, state, input);
 
 	lua_setglobal(state, name.to_char_star());
@@ -267,7 +267,7 @@ int callback(lua_State* state) {
 	}
 }
 
-Variant TestNode::call_function(String functionName, Variant args) {
+Variant LuaNode::call_function(String functionName, Variant args) {
 	lua_getglobal(state, functionName.to_char_star());
 
 	if (lua_isfunction(state, -1))
@@ -282,7 +282,7 @@ Variant TestNode::call_function(String functionName, Variant args) {
 	return NULL;
 }
 
-void TestNode::register_function(String functionName, Callable function)
+void LuaNode::register_function(String functionName, Callable function)
 {
 	add_func_into_register(functionName, function);
 
@@ -304,7 +304,7 @@ void add_func_into_register(String functionName, Callable function) {
 	} });
 }
 
-int TestNode::getFunctionId(string name)
+int LuaNode::getFunctionId(string name)
 {
 	for (int i = 0; i < funcs.size(); i++)
 	{
@@ -317,7 +317,7 @@ int TestNode::getFunctionId(string name)
 	return -1;
 }
 
-bool TestNode::compile(String _code) {
+bool LuaNode::compile(String _code) {
 	string delimiter = "\n";
 	int pos = 0;
 	int offset = 0;
@@ -387,11 +387,11 @@ bool TestNode::compile(String _code) {
 	return true;
 }
 
-void TestNode::_process(float delta) {
+void LuaNode::_process(float delta) {
 	
 }
 
-bool TestNode::load_lua(String code) {
+bool LuaNode::load_lua(String code) {
 	int result = luaL_loadstring(state, code.to_char_star());
 
 	if (result != LUA_OK) {
@@ -401,7 +401,7 @@ bool TestNode::load_lua(String code) {
 	return true;
 }
 
-void TestNode::call_update()
+void LuaNode::call_update()
 {
 	//ofstream myfile("C:\\Users\\unkno\\Documents\\GODOT\\log.txt");
 	//myfile << "start" << endl;
@@ -420,7 +420,7 @@ void TestNode::call_update()
 	}
 }
 
-String TestNode::print_error()
+String LuaNode::print_error()
 {
 	ofstream myfile("C:\\Users\\unkno\\Documents\\GODOT\\log.txt");
 	myfile << "start" << endl;

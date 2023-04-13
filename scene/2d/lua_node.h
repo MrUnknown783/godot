@@ -24,8 +24,8 @@ struct Info {
 
 //static vector<CallbackFunctionInfo> funcs = vector<CallbackFunctionInfo>();
 
-class TestNode : public Node {
-	GDCLASS(TestNode, Node);
+class LuaNode : public Node {
+	GDCLASS(LuaNode, Node);
 
 private:
 	bool stateClosed = true;
@@ -46,7 +46,7 @@ public:
 	void add_global(String name, Variant input);
 	void init();
 	String get_compiled_code();
-	String get_origignal_code();
+	String get_original_code();
 
 	void _process(float delta);
 
@@ -60,12 +60,12 @@ public:
 
 	String print_error();
 
-	TestNode();
-	~TestNode();
+	LuaNode();
+	~LuaNode();
 };
 
 static map<String, CallbackFunctionInfo> funcs = map<String, CallbackFunctionInfo>();
-static map<lua_State*, TestNode*> instances = map<lua_State*, TestNode*>();
+static map<lua_State*, LuaNode*> instances = map<lua_State*, LuaNode*>();
 
 //typedef int (TestNode::* lua_CFunction) (lua_State* L);
 
