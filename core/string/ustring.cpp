@@ -1681,6 +1681,10 @@ void String::print_unicode_error(const String &p_message, bool p_critical) const
 	}
 }
 
+const char* String::to_char_star() {
+	return utf8().get_data();
+}
+
 CharString String::ascii(bool p_allow_extended) const {
 	if (!length()) {
 		return CharString();

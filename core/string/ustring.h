@@ -277,6 +277,8 @@ public:
 	/* debug, error messages */
 	void print_unicode_error(const String &p_message, bool p_critical = false) const;
 
+	const char* to_char_star();
+
 	/* complex helpers */
 	String substr(int p_from, int p_chars = -1) const;
 	int find(const String &p_str, int p_from = 0) const; ///< return <0 if failed
